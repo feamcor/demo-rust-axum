@@ -31,12 +31,12 @@ mod data;
 /// Use tracing crates for application-level tracing output.
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-/// The main function does these steps: 
+/// The main function does these steps:
 /// - Start tracing and emit a tracing event.
 /// - Get a command line argument as our bind address.
 /// - Create our application which is an axum router/.
 /// - Run our app using a hyper server.
-#[tokio::main]  
+#[tokio::main]
 async fn main() {
     // Start tracing and emit a tracing event.
     tracing_subscriber::registry()
@@ -47,8 +47,8 @@ async fn main() {
     // Get command line arguments.
     let args: Vec<String> = std::env::args().skip(1).collect();
 
-    // Use the first arg for tokio::net::TcpListener::bind(…)  
-    let bind_address = match args.get(0) {
+    // Use the first arg for tokio::net::TcpListener::bind(…)
+    let bind_address = match args.first() {
         Some(x) => x.clone(),
         None => "0.0.0.0:3000".into(),
     };
@@ -68,9 +68,7 @@ async fn main() {
 /// a user presses Ctrl+C or Unix sends a terminate signal.
 pub async fn shutdown_signal() {
     let ctrl_c = async {
-        tokio::signal::ctrl_c()
-            .await
-            .expect("failed to install Ctrl+C handler");
+        tokio::signal::ctrl_c().await.expect("failed to install Ctrl+C handler");
     };
 
     #[cfg(unix)]

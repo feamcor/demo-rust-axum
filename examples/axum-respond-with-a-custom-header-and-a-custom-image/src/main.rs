@@ -9,10 +9,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/demo.png",
-            get(demo_png)
-        )
+    axum::Router::new().route("/demo.png", get(demo_png))
 }
 
 /// axum handler for "GET /demo.png" which responds with an image PNG.
@@ -25,9 +22,7 @@ async fn demo_png() -> impl axum::response::IntoResponse {
         "DwADvgGOSHzRgAAAAABJRU5ErkJggg=="
     );
     (
-        axum::response::AppendHeaders([
-            (axum::http::header::CONTENT_TYPE, "image/png"),
-        ]),
+        axum::response::AppendHeaders([(axum::http::header::CONTENT_TYPE, "image/png")]),
         base64::engine::general_purpose::STANDARD.decode(png).unwrap(),
     )
 }

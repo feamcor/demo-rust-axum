@@ -1432,8 +1432,15 @@ async fn print_data() {
     thread::spawn(move || {
         match DATA.lock() {
             Ok(data) => {
-        println!("data: {:?}" ,data);
-    }).join().unwrap()
+                println!("data: {:?}", data);
+            }
+            Err(_) => {
+                eprintln!("Failed to acquire lock");
+            }
+        }
+    })
+    .join()
+    .unwrap()
 }
 ```
 
@@ -1489,12 +1496,19 @@ pub async fn get_books() -> axum::response::Html<String> {
     thread::spawn(move || {
         match DATA.lock() {
             Ok(data) => {
-        let mut books = data.values().collect::<Vec<_>>().clone();
-        books.sort_by(|a, b| a.title.cmp(&b.title));
-        books.iter().map(|&book|
-            format!("<p>{}</p>\n", &book)
-        ).collect::<String>()
-    }).join().unwrap().into()
+                let mut books = data.values().collect::<Vec<_>>().clone();
+                books.sort_by(|a, b| a.title.cmp(&b.title));
+                books
+                    .iter()
+                    .map(|&book| format!("<p>{}</p>\n", &book))
+                    .collect::<String>()
+            }
+            Err(_) => String::new(),
+        }
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 
@@ -1543,16 +1557,22 @@ Add a handler:
 /// axum handler for "POST /books" which creates a new book resource.
 /// This demo shows how axum can extract JSON data into a Book struct.
 pub async fn post_books(
-    axum::extract::Json(book): axum::extract::Json<Book>
+    axum::extract::Json(book): axum::extract::Json<Book>,
 ) -> axum::response::Html<String> {
     thread::spawn(move || {
         match DATA.lock() {
             Ok(mut data) => {
-        let id = data.keys().max().unwrap() + 1;
-        let book = Book { id, ..book };
-        data.insert(id, book.clone());
-        format!("Post a new book with new id {}: {}", &id, &book)
-    }).join().unwrap().into()
+                let id = data.keys().max().unwrap() + 1;
+                let book = Book { id, ..book };
+                data.insert(id, book.clone());
+                format!("Post a new book with new id {}: {}", &id, &book)
+            }
+            Err(_) => String::new(),
+        }
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 
@@ -1616,16 +1636,20 @@ Add a handler:
 /// axum handler for "GET /books/{id}" which responds with one resource HTML page.
 /// This demo app uses our DATA variable, and iterates on it to find the id.
 pub async fn get_books_id(
-    axum::extract::Path(id): axum::extract::Path<u32>
+    axum::extract::Path(id): axum::extract::Path<u32>,
 ) -> axum::response::Html<String> {
     thread::spawn(move || {
         match DATA.lock() {
-            Ok(data) => {
-        match data.get(&id) {
-            Some(book) => format!("<p>{}</p>\n", &book),
-            None => format!("<p>Book id {} not found</p>", id),
+            Ok(data) => match data.get(&id) {
+                Some(book) => format!("<p>{}</p>\n", &book),
+                None => format!("<p>Book id {} not found</p>", id),
+            },
+            Err(_) => String::new(),
         }
-    }).join().unwrap().into()
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 
@@ -1684,14 +1708,20 @@ Add a handler:
 /// axum handler for "PUT /books/{id}" which sets a specific book resource.
 /// This demo shows how axum can extract JSON data into a Book struct.
 pub async fn put_books_id(
-    axum::extract::Json(book): axum::extract::Json<Book>
+    axum::extract::Json(book): axum::extract::Json<Book>,
 ) -> axum::response::Html<String> {
     thread::spawn(move || {
         match DATA.lock() {
             Ok(mut data) => {
-        data.insert(book.id, book.clone());
-        format!("Put book: {}", &book)
-    }).join().unwrap().into()
+                data.insert(book.id, book.clone());
+                format!("Put book: {}", &book)
+            }
+            Err(_) => String::new(),
+        }
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 
@@ -1769,18 +1799,24 @@ Add a handler:
 /// axum handler for "DELETE /books/{id}" which destroys a resource.
 /// This demo extracts an id, then mutates the book in the DATA store.
 pub async fn delete_books_id(
-    axum::extract::Path(id): axum::extract::Path<u32>
+    axum::extract::Path(id): axum::extract::Path<u32>,
 ) -> axum::response::Html<String> {
     thread::spawn(move || {
         match DATA.lock() {
             Ok(mut data) => {
-        if data.contains_key(&id) {
-            data.remove(&id);
-            format!("Delete book id: {}", &id)
-        } else {
-            format!("Book id not found: {}", &id)
+                if data.contains_key(&id) {
+                    data.remove(&id);
+                    format!("Delete book id: {}", &id)
+                } else {
+                    format!("Book id not found: {}", &id)
+                }
+            }
+            Err(_) => String::new(),
         }
-    }).join().unwrap().into()
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 
@@ -1884,24 +1920,30 @@ Add a handler:
 /// axum handler for "PATCH /books/{id}" which updates attributes.
 /// This demo shows how to mutate the book attributes in the DATA store.
 pub async fn patch_books_id(
-    axum::extract::Json(book_change): axum::extract::Json<BookChange>
+    axum::extract::Json(book_change): axum::extract::Json<BookChange>,
 ) -> axum::response::Html<String> {
     thread::spawn(move || {
         let id = book_change.id;
         match DATA.lock() {
             Ok(mut data) => {
-        if data.contains_key(&id) {
-            if let Some(title) = book_change.title {
-                data.get_mut(&id).unwrap().title = title.clone();
+                if data.contains_key(&id) {
+                    if let Some(title) = book_change.title {
+                        data.get_mut(&id).unwrap().title = title;
+                    }
+                    if let Some(author) = book_change.author {
+                        data.get_mut(&id).unwrap().author = author;
+                    }
+                    format!("Patch book id: {}", &id)
+                } else {
+                    format!("Book id not found: {}", &id)
+                }
             }
-            if let Some(author) = book_change.author {
-                data.get_mut(&id).unwrap().title = author.clone();
-            }
-            format!("Patch book id: {}", &id)
-        } else {
-            format!("Book id not found: {}", &id)
+            Err(_) => String::new(),
         }
-    }).join().unwrap().into()
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 
@@ -1968,29 +2010,33 @@ Add a handler:
 /// axum handler for "GET /books/{id}/form" which responds with a form.
 /// This demo shows how to write a typical HTML form with input fields.
 pub async fn get_books_id_form(
-    axum::extract::Path(id): axum::extract::Path<u32>
+    axum::extract::Path(id): axum::extract::Path<u32>,
 ) -> axum::response::Html<String> {
     thread::spawn(move || {
         match DATA.lock() {
-            Ok(data) => {
-        match data.get(&id) {
-            Some(book) => format!(
-                concat!(
-                    "<form method=\"patch\" action=\"/books/{}/form\">\n",
-                    "<input type=\"hidden\" name=\"id\" value=\"{}\">\n",
-                    "<p><input name=\"title\" value=\"{}\"></p>\n",
-                    "<p><input name=\"author\" value=\"{}\"></p>\n",
-                    "<input type=\"submit\" value=\"Save\">\n",
-                    "</form>\n"
+            Ok(data) => match data.get(&id) {
+                Some(book) => format!(
+                    concat!(
+                        "<form method=\"post\" action=\"/books/{}/form\">\n",
+                        "<input type=\"hidden\" name=\"id\" value=\"{}\">\n",
+                        "<p><input name=\"title\" value=\"{}\"></p>\n",
+                        "<p><input name=\"author\" value=\"{}\"></p>\n",
+                        "<input type=\"submit\" value=\"Save\">\n",
+                        "</form>\n"
+                    ),
+                    &book.id,
+                    &book.id,
+                    &book.title,
+                    &book.author
                 ),
-                &book.id,
-                &book.id,
-                &book.title,
-                &book.author
-            ),
-            None => format!("<p>Book id {} not found</p>", id),
+                None => format!("<p>Book id {} not found</p>", id),
+            },
+            Err(_) => String::new(),
         }
-    }).join().unwrap().into()
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 
@@ -2038,27 +2084,28 @@ let app = Router::new()
 Add a handler:
 
 ```rust
-/// axum handler for "PATCH /books/{id}/form" which submits an HTML form.
-/// This demo shows how to do a form submission then patch a resource.
-pub async fn patch_books_id_form(
-    form: axum::extract::Form<Book>
+/// axum handler for "POST /books/{id}/form" which submits an HTML form.
+/// This demo shows how to do a form submission then update a resource.
+pub async fn post_books_id_form(
+    form: axum::extract::Form<Book>,
 ) -> axum::response::Html<String> {
     let new_book: Book = form.0;
     thread::spawn(move || {
         match DATA.lock() {
             Ok(mut data) => {
-        if data.contains_key(&new_book.id) {
-            if !new_book.title.is_empty() {
-                data.get_mut(&new_book.id).unwrap().title = new_book.title.clone();
+                if data.contains_key(&new_book.id) {
+                    data.insert(new_book.id, new_book.clone());
+                    format!("Post book: {}", &new_book)
+                } else {
+                    format!("Book id not found: {}", &new_book.id)
+                }
             }
-            if !new_book.author.is_empty() {
-                data.get_mut(&new_book.id).unwrap().author = new_book.author.clone();
-            }
-            format!("Patch book: {}", &new_book)
-        } else {
-            format!("Book id not found: {}", &new_book.id)
+            Err(_) => String::new(),
         }
-    }).join().unwrap().into()
+    })
+    .join()
+    .unwrap()
+    .into()
 }
 ```
 

@@ -13,17 +13,12 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .fallback(
-            fallback
-        )
+    axum::Router::new().fallback(fallback)
 }
 
 /// axum handler for any request that fails to match the router routes.
 /// This implementation responds with HTTP status code NOT FOUND (404).
-pub async fn fallback(
-    uri: axum::http::Uri
-) -> impl axum::response::IntoResponse {
+pub async fn fallback(uri: axum::http::Uri) -> impl axum::response::IntoResponse {
     (axum::http::StatusCode::NOT_FOUND, uri.to_string())
 }
 

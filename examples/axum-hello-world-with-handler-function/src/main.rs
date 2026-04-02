@@ -10,14 +10,11 @@ async fn main() {
 
 /// Create our application with one route that prints "Hello, World!"
 pub fn app() -> axum::Router {
-    axum::Router::new()
-    .route("/",
-        get(hello)
-    )
+    axum::Router::new().route("/", get(hello))
 }
 
 /// axum handler function which returns a string and causes axum to
 /// immediately respond with status code `200 OK` and the string.
 pub async fn hello() -> String {
-   "Hello, World!".into()
+    "Hello, World!".into()
 }

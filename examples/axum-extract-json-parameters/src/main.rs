@@ -27,18 +27,13 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/demo.json",
-            put(put_demo_json)
-        )
+    axum::Router::new().route("/demo.json", put(put_demo_json))
 }
 
 /// axum handler for "PUT /demo.json" which uses `aumx::extract::Json`.
 /// This buffers the request body then deserializes it using serde.
 /// The `Json` type supports types that implement `serde::Deserialize`.
-pub async fn put_demo_json(
-    axum::extract::Json(data): axum::extract::Json<serde_json::Value>
-) -> String {
+pub async fn put_demo_json(axum::extract::Json(data): axum::extract::Json<serde_json::Value>) -> String {
     format!("Put demo JSON data: {:?}", data)
 }
 

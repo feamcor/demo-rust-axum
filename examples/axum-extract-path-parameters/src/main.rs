@@ -16,18 +16,12 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/demo-path/{id}",
-            get(get_demo_path_id)
-        )
+    axum::Router::new().route("/demo-path/{id}", get(get_demo_path_id))
 }
 
 /// axum handler for "GET /demo-path/{id}" which uses `axum::extract::Path`.
 /// This extracts a path parameter then deserializes it as needed.
-pub async fn get_demo_path_id(
-    axum::extract::Path(id):
-        axum::extract::Path<String>
-) -> String {
+pub async fn get_demo_path_id(axum::extract::Path(id): axum::extract::Path<String>) -> String {
     format!("Get demo path id: {:?}", id)
 }
 
@@ -39,6 +33,9 @@ mod tests {
     #[tokio::test]
     async fn test() {
         let server = TestServer::new(app()).unwrap();
-        server.get("/demo-path/111").await.assert_text("Get demo path id: \"111\"");
+        server
+            .get("/demo-path/111")
+            .await
+            .assert_text("Get demo path id: \"111\"");
     }
 }

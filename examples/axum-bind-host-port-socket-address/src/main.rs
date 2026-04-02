@@ -11,10 +11,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-    .route("/",
-        axum::routing::get(|| async { "Hello, World!" })
-    )
+    axum::Router::new().route("/", axum::routing::get(|| async { "Hello, World!" }))
 }
 
 #[cfg(test)]

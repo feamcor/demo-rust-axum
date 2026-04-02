@@ -21,9 +21,15 @@ use crate::book::Book;
 // async fn example() {
 //     thread::spawn(move || {
 //         match DATA.lock() {
-            Ok(data) => {
-//         …
-// }).join().unwrap()
+//             Ok(data) => {
+//                 // work with data
+//             }
+//             Err(_) => {
+//                 // handle error
+//             }
+//         }
+//     }).join().unwrap()
+// }
 // ```
 
 // Note: static items do not call [`Drop`] on program termination, so this won't

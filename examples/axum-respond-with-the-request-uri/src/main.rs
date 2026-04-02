@@ -9,10 +9,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/request-uri",
-            get(request_uri)
-        )
+    axum::Router::new().route("/request-uri", get(request_uri))
 }
 
 /// axum handler for "GET /request-uri" which shows the request's own URI.
@@ -29,6 +26,9 @@ mod tests {
     #[tokio::test]
     async fn test() {
         let server = TestServer::new(app()).unwrap();
-        server.get("/request-uri").await.assert_text("The URI is: http://localhost/request-uri");
+        server
+            .get("/request-uri")
+            .await
+            .assert_text("The URI is: http://localhost/request-uri");
     }
 }

@@ -17,12 +17,8 @@ async fn main() {
 /// Create our application.
 pub fn app() -> axum::Router {
     axum::Router::new()
-        .route("/demo-css",
-        get(get_demo_css)
-        )
-        .route("/demo-csv",
-            get(get_demo_csv)
-        )
+        .route("/demo-css", get(get_demo_css))
+        .route("/demo-csv", get(get_demo_csv))
 }
 
 /// axum handler for "GET /demo-css" to get cascading style sheet text.
@@ -33,14 +29,11 @@ async fn get_demo_css() -> impl axum::response::IntoResponse {
     let mut headers = axum::http::HeaderMap::new();
     headers.insert(
         axum::http::header::CONTENT_TYPE,
-        axum::http::HeaderValue::from_static(&"text/css")
+        axum::http::HeaderValue::from_static("text/css"),
     );
     (
         headers,
-        concat!(
-            "b: { font-color: red; }\n",
-            "i: { font-color: blue; }\n",
-        )
+        concat!("b: { font-color: red; }\n", "i: { font-color: blue; }\n",),
     )
 }
 
@@ -52,15 +45,9 @@ async fn get_demo_csv() -> impl axum::response::IntoResponse {
     let mut headers = axum::http::HeaderMap::new();
     headers.insert(
         axum::http::header::CONTENT_TYPE,
-        axum::http::HeaderValue::from_static(&"text/csv")
+        axum::http::HeaderValue::from_static("text/csv"),
     );
-    (
-        headers,
-        concat!(
-            "alfa,bravo,charlie\n",
-            "delta,echo,foxtrot\n",
-        )
-    )
+    (headers, concat!("alfa,bravo,charlie\n", "delta,echo,foxtrot\n",))
 }
 
 #[cfg(test)]
@@ -83,5 +70,4 @@ mod tests {
         response.assert_header("content-type", "text/csv");
         response.assert_text("alfa,bravo,charlie\ndelta,echo,foxtrot\n");
     }
-
 }

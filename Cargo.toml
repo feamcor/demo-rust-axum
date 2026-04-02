@@ -62,8 +62,8 @@ name = "axum-graceful-shutdown"
 path = "examples/axum-graceful-shutdown/src/main.rs"
 
 [[example]]
-name = "axum-hello-world-with-functions"
-path = "examples/axum-hello-world-with-functions/src/main.rs"
+name = "axum-hello-world-with-handler-function"
+path = "examples/axum-hello-world-with-handler-function/src/main.rs"
 
 [[example]]
 name = "axum-hello-world"

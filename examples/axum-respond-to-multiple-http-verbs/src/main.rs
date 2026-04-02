@@ -24,14 +24,14 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/foo",
-            get(get_foo)
+    axum::Router::new().route(
+        "/foo",
+        get(get_foo)
             .put(put_foo)
             .patch(patch_foo)
             .post(post_foo)
-            .delete(delete_foo)
-        )
+            .delete(delete_foo),
+    )
 }
 
 /// axum handler for "GET /foo" which returns a string message.
@@ -98,5 +98,4 @@ mod tests {
         let server = TestServer::new(app()).unwrap();
         server.delete("/foo").await.assert_text("DELETE foo");
     }
-    
 }

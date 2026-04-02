@@ -16,10 +16,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/demo-http-status-code",
-            get(demo_http_status_code)
-        )
+    axum::Router::new().route("/demo-http-status-code", get(demo_http_status_code))
 }
 
 /// axum handler for "GET /demo-http-status-code" which returns a
@@ -36,6 +33,9 @@ mod tests {
     #[tokio::test]
     async fn test() {
         let server = TestServer::new(app()).unwrap();
-        server.get("/demo-http-status-code").await.assert_status(axum::http::StatusCode::OK);
+        server
+            .get("/demo-http-status-code")
+            .await
+            .assert_status(axum::http::StatusCode::OK);
     }
 }

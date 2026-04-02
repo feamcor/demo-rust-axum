@@ -179,7 +179,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "demo-rust-axum-examples-axum-hello-world-with-functions"
+name = "demo-rust-axum-examples-axum-hello-world-with-app-function"
 version = "2.0.0"
 dependencies = [
  "axum",

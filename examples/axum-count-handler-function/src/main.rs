@@ -12,10 +12,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/count",
-            get(count)
-        )
+    axum::Router::new().route("/count", get(count))
 }
 
 /// axum handler for "GET /count" which shows the program's count duration.
@@ -35,6 +32,11 @@ mod tests {
         let server = TestServer::new(app()).unwrap();
         let response_text_0 = server.get("/count").await.text();
         let response_text_1 = server.get("/count").await.text();
-        assert!(response_text_0 < response_text_1, "{} < {}", response_text_0, response_text_1);
+        assert!(
+            response_text_0 < response_text_1,
+            "{} < {}",
+            response_text_0,
+            response_text_1
+        );
     }
 }

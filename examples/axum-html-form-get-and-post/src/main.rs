@@ -16,16 +16,12 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-    .route("/demo-form",
-        get(get_demo_form)
-            .post(post_demo_form)
-        )
+    axum::Router::new().route("/demo-form", get(get_demo_form).post(post_demo_form))
 }
 
-/////
-/// Demo HTML form GET and POST
-/////
+//
+// Demo HTML form GET and POST
+//
 
 /// See file book.rs, which defines the `Book` struct.
 mod book;
@@ -33,7 +29,7 @@ use crate::book::Book;
 
 /// axum handler for "GET /demo-form" which responds with a form.
 /// This demo shows how to write a typical HTML form with input fields.
-pub async fn get_demo_form() ->  axum::response::Html<&'static str> {
+pub async fn get_demo_form() -> axum::response::Html<&'static str> {
     r#"
     <!doctype html>
     <html>
@@ -63,14 +59,13 @@ pub async fn get_demo_form() ->  axum::response::Html<&'static str> {
             </form>
         </body>
     </html>
-    "#.into()
+    "#
+    .into()
 }
 
 /// axum handler for "POST /demo-form" which submits an HTML form.
 /// This demo shows how extract a form submission to a struct.
-pub async fn post_demo_form(
-    form: axum::extract::Form<Book>
-) -> axum::response::Html<String> {
+pub async fn post_demo_form(form: axum::extract::Form<Book>) -> axum::response::Html<String> {
     let book: Book = form.0;
     format!(
         r#"
@@ -86,7 +81,8 @@ pub async fn post_demo_form(
         </html>
         "#,
         &book
-    ).into()
+    )
+    .into()
 }
 
 #[cfg(test)]
@@ -104,10 +100,7 @@ mod tests {
     #[tokio::test]
     async fn post_demo_form() {
         let server = TestServer::new(app()).unwrap();
-        let data = [
-            ["title", "alfa"],
-            ["author", "bravo"],
-        ];
+        let data = [["title", "alfa"], ["author", "bravo"]];
         let response_text = server.post("/demo-form").form(&data).await.text();
         assert!(response_text.contains("Book { title: \"alfa\", author: \"bravo\" }"));
     }

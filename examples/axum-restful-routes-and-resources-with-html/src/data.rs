@@ -21,14 +21,41 @@ use crate::book::Book;
 // async fn example() {
 //     thread::spawn(move || {
 //         match DATA.lock() {
-            Ok(data) => {
-//         …
-// }).join().unwrap()
+//             Ok(data) => {
+//                 // work with data
+//             }
+//             Err(_) => {
+//                 // handle error
+//             }
+//         }
+//     }).join().unwrap()
+// }
 // ```
-pub static DATA: LazyLock<Mutex<HashMap<u32, Book>>> = LazyLock::new(|| Mutex::new(
-    HashMap::from([
-        (1, Book { id: 1, title: "Antigone".into(), author: "Sophocles".into()}),
-        (2, Book { id: 2, title: "Beloved".into(), author: "Toni Morrison".into()}),
-        (3, Book { id: 3, title: "Candide".into(), author: "Voltaire".into()}),
-    ])
-));
+pub static DATA: LazyLock<Mutex<HashMap<u32, Book>>> = LazyLock::new(|| {
+    Mutex::new(HashMap::from([
+        (
+            1,
+            Book {
+                id: 1,
+                title: "Antigone".into(),
+                author: "Sophocles".into(),
+            },
+        ),
+        (
+            2,
+            Book {
+                id: 2,
+                title: "Beloved".into(),
+                author: "Toni Morrison".into(),
+            },
+        ),
+        (
+            3,
+            Book {
+                id: 3,
+                title: "Candide".into(),
+                author: "Voltaire".into(),
+            },
+        ),
+    ]))
+});

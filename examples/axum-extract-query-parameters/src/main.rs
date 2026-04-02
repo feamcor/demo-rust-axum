@@ -21,18 +21,12 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-    .route("/demo-query",
-        get(get_demo_query)
-    )
+    axum::Router::new().route("/demo-query", get(get_demo_query))
 }
 
 /// axum handler for "GET /demo-query" which uses `axum::extract::Query`.
 /// This extracts query parameters and creates a key-value pair map.
-pub async fn get_demo_query(
-    axum::extract::Query(params):
-        axum::extract::Query<HashMap<String, String>>
-) -> String {
+pub async fn get_demo_query(axum::extract::Query(params): axum::extract::Query<HashMap<String, String>>) -> String {
     format!("Demo query params: {:?}", params)
 }
 
@@ -44,7 +38,9 @@ mod tests {
     #[tokio::test]
     async fn test() {
         let server = TestServer::new(app()).unwrap();
-        server.get("/demo-query?a=b").await.assert_text("Demo query params: {\"a\": \"b\"}");
+        server
+            .get("/demo-query?a=b")
+            .await
+            .assert_text("Demo query params: {\"a\": \"b\"}");
     }
 }
-

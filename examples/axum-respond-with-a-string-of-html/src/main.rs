@@ -9,10 +9,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/string.html",
-            get(string_html)
-        )
+    axum::Router::new().route("/string.html", get(string_html))
 }
 
 /// axum handler for "GET /string.html" which responds with a string.
@@ -29,6 +26,9 @@ mod tests {
     #[tokio::test]
     async fn test() {
         let server = TestServer::new(app()).unwrap();
-        server.get("/string.html").await.assert_text("<html><body><h1>Headline</h1><p>Paragraph</b></body></html>")
+        server
+            .get("/string.html")
+            .await
+            .assert_text("<html><body><h1>Headline</h1><p>Paragraph</b></body></html>")
     }
 }

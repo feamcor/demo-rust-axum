@@ -9,10 +9,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/epoch",
-            get(epoch)
-        )
+    axum::Router::new().route("/epoch", get(epoch))
 }
 
 /// axum handler for "GET /epoch" which shows the current epoch time.
@@ -20,7 +17,7 @@ pub fn app() -> axum::Router {
 pub async fn epoch() -> Result<String, axum::http::StatusCode> {
     match std::time::SystemTime::now().duration_since(std::time::SystemTime::UNIX_EPOCH) {
         Ok(duration) => Ok(format!("{}", duration.as_secs())),
-        Err(_) => Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR)
+        Err(_) => Err(axum::http::StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
 
@@ -35,6 +32,11 @@ mod tests {
         let response_text_0 = server.get("/epoch").await.text();
         std::thread::sleep(std::time::Duration::from_secs(1));
         let response_text_1 = server.get("/epoch").await.text();
-        assert!(response_text_0 < response_text_1, "{} < {}", response_text_0, response_text_1)
+        assert!(
+            response_text_0 < response_text_1,
+            "{} < {}",
+            response_text_0,
+            response_text_1
+        )
     }
 }

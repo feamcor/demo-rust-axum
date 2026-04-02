@@ -1,7 +1,7 @@
 use axum::routing::get;
 
 /// Create the constant INSTANT so the program can track its own uptime.
-pub static INSTANT: std::sync::LazyLock<std::time::Instant> = std::sync::LazyLock::new(|| std::time::Instant::now());
+pub static INSTANT: std::sync::LazyLock<std::time::Instant> = std::sync::LazyLock::new(std::time::Instant::now);
 
 /// Run our app using a hyper server on http://localhost:3000.
 #[tokio::main]
@@ -12,10 +12,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/uptime",
-            get(uptime)
-        )
+    axum::Router::new().route("/uptime", get(uptime))
 }
 
 /// axum handler for "GET /uptime" which shows the program's uptime duration.
@@ -35,6 +32,11 @@ mod tests {
         let response_text_0 = server.get("/uptime").await.text();
         std::thread::sleep(std::time::Duration::from_secs(1));
         let response_text_1 = server.get("/uptime").await.text();
-        assert!(response_text_0 < response_text_1, "{} < {}", response_text_0, response_text_1)
+        assert!(
+            response_text_0 < response_text_1,
+            "{} < {}",
+            response_text_0,
+            response_text_1
+        )
     }
 }

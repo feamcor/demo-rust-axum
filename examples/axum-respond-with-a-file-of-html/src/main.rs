@@ -9,10 +9,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/file.html",
-            get(file_html)
-        )
+    axum::Router::new().route("/file.html", get(file_html))
 }
 
 /// axum handler that responds with typical HTML coming from a file.
@@ -30,6 +27,8 @@ mod tests {
     #[tokio::test]
     async fn test() {
         let server = TestServer::new(app()).unwrap();
-        server.get("/file.html").await.assert_text("<html>\n    <body>\n        <h1>Headline</h1>\n        <p>Paragraph</p>\n    </body>\n</html>\n");
+        server.get("/file.html").await.assert_text(
+            "<html>\n    <body>\n        <h1>Headline</h1>\n        <p>Paragraph</p>\n    </body>\n</html>\n",
+        );
     }
 }

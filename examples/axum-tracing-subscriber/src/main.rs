@@ -1,8 +1,5 @@
 /// Use tracing crates for application-level tracing output.
-use tracing_subscriber::{
-    layer::SubscriberExt,
-    util::SubscriberInitExt,
-};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 /// Run our app using a hyper server on http://localhost:3000.
 #[tokio::main]
@@ -20,10 +17,7 @@ async fn main() {
 
 /// Create our application.
 pub fn app() -> axum::Router {
-    axum::Router::new()
-        .route("/",
-            axum::routing::get(|| async { "Hello, World!" })
-        )
+    axum::Router::new().route("/", axum::routing::get(|| async { "Hello, World!" }))
 }
 
 #[cfg(test)]

@@ -1,5 +1,5 @@
 // Use Deserialize to convert e.g. from request JSON into Book struct.
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 // Demo book patch structure with some example fields for id, title, author.
 // A production app could prefer an id to be type u32, UUID, etc.
@@ -14,11 +14,6 @@ pub struct BookChange {
 // This is a typical Rust trait and is not axum-specific.
 impl std::fmt::Display for BookChange {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "{:?} by {:?}",
-            self.title,
-            self.author,
-        )
+        write!(f, "{:?} by {:?}", self.title, self.author,)
     }
 }

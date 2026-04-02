@@ -21,10 +21,12 @@ async fn demo_png() -> impl axum::response::IntoResponse {
         "CAYAAAAfFcSJAAAADUlEQVR42mPk+89Q",
         "DwADvgGOSHzRgAAAAABJRU5ErkJggg=="
     );
-    (
-        axum::response::AppendHeaders([(axum::http::header::CONTENT_TYPE, "image/png")]),
-        base64::engine::general_purpose::STANDARD.decode(png).unwrap(),
-    )
+    let mut headers = axum::http::HeaderMap::new();
+    headers.insert(
+        axum::http::header::CONTENT_TYPE,
+        axum::http::HeaderValue::from_static("image/png"),
+    );
+    (headers, base64::engine::general_purpose::STANDARD.decode(png).unwrap())
 }
 
 #[cfg(test)]
@@ -37,6 +39,5 @@ mod tests {
         let server = TestServer::new(app()).unwrap();
         let response = server.get("/demo.png").await;
         response.assert_header("content-type", "image/png");
-        TODO
     }
 }

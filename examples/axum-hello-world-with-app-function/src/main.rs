@@ -1,5 +1,4 @@
 /// Use axum routing.
-use axum::routing::get;
 
 /// Run our app using a hyper server on http://localhost:3000.
 #[tokio::main]

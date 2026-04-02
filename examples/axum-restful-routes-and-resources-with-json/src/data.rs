@@ -1,31 +1,10 @@
-// Use Lazy for creating a global variable e.g. our DATA.
-use std::sync::LazyLock;
-
-// Use Mutex for thread-safe access to a variable e.g. our DATA.
-use std::sync::Mutex;
-
-// Use HashMap for storing data as key-value pairs e.g. our DATA.
 use std::collections::HashMap;
+use std::sync::{LazyLock, RwLock};
 
-// Use the Book struct.
 use crate::book::Book;
 
-// Create a data store as a global variable with `Lazy` and `Mutex`.
-//
-// This demo implementation uses a `HashMap` for ease and speed.
-// The map key is a primary key for lookup; the map value is a Book.
-//
-// To access data, create a thread, spawn it, and acquire the lock:
-//
-// ```
-// async fn example() {
-//     thread::spawn(move || {
-//         if let data = Ok(DATA.lock());
-//         …
-// }).join().unwrap()
-// ```
-pub static DATA: LazyLock<Mutex<HashMap<u32, Book>>> = LazyLock::new(|| {
-    Mutex::new(HashMap::from([
+fn create_initial_data() -> HashMap<u32, Book> {
+    HashMap::from([
         (
             1,
             Book {
@@ -50,5 +29,14 @@ pub static DATA: LazyLock<Mutex<HashMap<u32, Book>>> = LazyLock::new(|| {
                 author: "Voltaire".into(),
             },
         ),
-    ]))
-});
+    ])
+}
+
+pub static DATA: LazyLock<RwLock<HashMap<u32, Book>>> = LazyLock::new(|| RwLock::new(create_initial_data()));
+
+#[cfg(test)]
+pub fn reset() {
+    if let Ok(mut data) = DATA.write() {
+        *data = create_initial_data();
+    }
+}

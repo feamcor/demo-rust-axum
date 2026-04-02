@@ -20,9 +20,7 @@ categories = ["web-programming"]
 
 [dependencies]
 axum = { version = "~0.8.8" } # Web framework that focuses on ergonomics and modularity.
-hyper = { version = "~1.6.0", features = ["full"] } # A fast and correct HTTP library.
 tokio = { version = "~1.45.1", features = ["full"] } # Event-driven, non-blocking I/O platform.
-tower = { version =  "~0.5.3" } # Modular reusable components for building robust clients and servers.
 serde = { version = "~1.0.228", features = ["derive"] } # A serialization/deserialization framework.
 serde_json = { version = "~1.0.149" } # Serde serialization/deserialization of JSON data.
 base64 = { version = "~0.22.1" } # Encode and decode base64 as bytes or utf8.

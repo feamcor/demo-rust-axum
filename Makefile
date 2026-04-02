@@ -1,5 +1,4 @@
 top = $(shell git rev-parse --show-toplevel)
-projects = $(sort $(dir $(shell find "${top}" -name "Cargo.toml")))
 
 all: demo-rust-axum-by-joel-parker-henderson.epub demo-rust-axum-by-joel-parker-henderson.pdf
 
@@ -28,7 +27,7 @@ cargo-update:
 
 .PHONY: cargo-upgrade
 cargo-upgrade:
-	for dir in $projects; do \
+	for dir in $(sort $(dir $(shell find "${top}" -name "Cargo.toml"))); do \
 		echo "cargo-upgrade $${dir}" && \
 		cd $${dir} && \
 		cargo update && \
@@ -39,7 +38,7 @@ cargo-upgrade:
 
 .PHONY: cargo-upgrade-incompatible
 cargo-upgrade-incompatible:
-	for dir in $projects; do \
+	for dir in $(sort $(dir $(shell find "${top}" -name "Cargo.toml"))); do \
 		echo "cargos-upgrade-incompatible $${dir}" && \
 		cd $${dir} && \
 		cargo update && \
